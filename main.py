@@ -2,6 +2,8 @@ import sys
 import scanner
 
 # https://home.agh.edu.pl/~mkuta/tklab/
+# pip3 freeze > requirements.txt
+
 if __name__ == '__main__':
     filename = sys.argv[1] if len(sys.argv) > 1 else "example.txt"
     try:
