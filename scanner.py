@@ -44,7 +44,7 @@ t_EQUAL = r'=='
 t_RANGE = r':'
 t_TRANSPOSE = r'\''
 t_ADD = r'\+'
-t_SUB = r'-'
+t_SUB = r'\-'
 t_MUL = r'\*'
 t_DIV = r'/'
 
@@ -70,7 +70,7 @@ def t_INTNUM(t):
 
 
 def t_STRING(t):
-    r'".*"'
+    r'".*"?'
     t.value = str(t.value)
     return t
 
@@ -83,7 +83,7 @@ def t_newline(t):
 def t_COMMENT(t):
     r'\#.*'
     pass
-#XD
+
 
 def t_error(t):
     print("line %d: illegal character '%s'" % (t.lineno, t.value[0]))
