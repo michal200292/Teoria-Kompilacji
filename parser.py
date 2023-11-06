@@ -6,7 +6,7 @@ tokens = scanner.tokens
 precedence = (
     ('nonassoc', 'IF'),
     ('nonassoc', 'ELSE'),
-    ('right', 'MULASSIGN', 'DIVASSIGN', 'SUBASSIGN', 'ADDASSIGN'),
+    # ('right', 'MULASSIGN', 'DIVASSIGN', 'SUBASSIGN', 'ADDASSIGN'),
     ('nonassoc', 'LESSTHAN', 'GREATERTHAN', 'GREATEREQUAL', 'LESSEQUAL', 'EQUAL', 'NOTEQUAL'),
     ('left', 'ADD', 'SUB'),
     ('left', 'DOTADD', 'DOTSUB'),
@@ -48,7 +48,7 @@ def p_instruction_while(p):
     """ instruction_while : WHILE "(" expression ")" instruction_list"""
 
 def p_instruction_for(p):
-    """instruction_for : FOR ID EQUAL expression RANGE expression instruction_list"""
+    """instruction_for : FOR ID ASSIGN expression RANGE expression instruction_list"""
 
 # def p_break(p):
 #     """break : BREAK"""
@@ -67,7 +67,7 @@ def p_instruction_print(p):
 
 def p_printables(p):
     """ printables : printable
-                   | printables "," printable"""
+                   | printable "," printables"""
 
 def p_printable(p):
     """ printable : expression
@@ -81,7 +81,7 @@ def p_instruction_return(p):
                            | RETURN expression"""
 
 
-def p_instr_assign(p):
+def p_instruction_assign(p):
     """ instruction_assign : assignable ASSIGN expression
                            | assignable ADDASSIGN expression
                            | assignable SUBASSIGN expression
@@ -160,7 +160,7 @@ def p_matrix_element(p):
 
 
 def p_vectors(p):  #!!!
-    """vectors : vectors "," vector
+    """vectors : vector "," vectors
                | vector """
 
 
@@ -169,19 +169,19 @@ def p_vector(p):
 
 
 def p_vector_element(p):
-    """ vector_element : ID "[" INTNUM "]" """
+    """ vector_element : ID "[" expression "]" """
 
 
 
 def p_variables(p):
-    """variables : variables "," variable
-                 | variable """
+    """variables : expression "," variables
+                 | expression """
 
 
-def p_variable(p):
-    """variable : INTNUM
-                | FLOATNUM
-                | assignable """
+# def p_variable(p):
+#     """variable : INTNUM
+#                 | FLOATNUM
+#                 | assignable """
 
 
 

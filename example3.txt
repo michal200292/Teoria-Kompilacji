@@ -10,7 +10,9 @@ else if(N!=10)
 
 
 if(N>5) {
-    print "N>5";
+    if(N > 5){
+        print "N>5";
+    }
 }
 else if(N>=0) {
     print "N>=0";
@@ -43,7 +45,7 @@ for i = 1:N
     print i, j;
 
 
-for i = 1:N {
+for i = 1:N+2 {
     if(i<=N/16)
         print i;
     else if(i<=N/8)
@@ -52,6 +54,8 @@ for i = 1:N {
         continue;
     else if(i<=N/2)
         return 0;
+    else
+        print "Hello World";
 }
 
 
