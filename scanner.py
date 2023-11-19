@@ -56,14 +56,15 @@ def t_ID(t):
     t.type = reserved.get(t.value, 'ID')  # Check for reserved words
     return t
 
+
 def t_FLOATNUM(t):
-    r'([-+]?)([0-9]*\.[0-9]+|[0-9]+\.[0-9]*)([eE][-+]?[0-9]+)?'
+    r'([-+]?)([0-9]*\.?[0-9]+|[0-9]+\.?[0-9]*)([eE][-+]?[0-9]+)?'
     t.value = float(t.value)
     return t
 
 
 def t_INTNUM(t):
-    r'\d+'
+    r'([-+]?)\d+'
     t.value = int(t.value)
     return t
 
