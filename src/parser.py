@@ -1,4 +1,4 @@
-import scanner
+from src import scanner
 import ply.yacc as yacc
 
 tokens = scanner.tokens
