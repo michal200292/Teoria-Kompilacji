@@ -1,5 +1,5 @@
 import sys
-import scanner
+from src import scanner
 
 # https://home.agh.edu.pl/~mkuta/tklab/
 # pip3 freeze > requirements.txt
