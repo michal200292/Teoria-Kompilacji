@@ -24,12 +24,12 @@ def p_error(p):
 
 
 def p_program_instructions(p):  #!#!#!#! moze na @odwrut
-    """program : instruction_list program
-               | instruction_list"""
+    """program : instruction program
+               | instruction"""
 
 
 def p_instruction(p):
-    """instruction_list : instruction_while
+    """instruction : instruction_while
                         | instruction_for
                         | instruction_if
                         | instruction_print ";"
@@ -40,15 +40,15 @@ def p_instruction(p):
 
 
 def p_braces(p):
-    """instruction_list : "{" program "}" """
+    """instruction : "{" program "}" """
 
 
 
 def p_instruction_while(p):
-    """ instruction_while : WHILE "(" expression ")" instruction_list"""
+    """ instruction_while : WHILE "(" expression ")" instruction"""
 
 def p_instruction_for(p):
-    """instruction_for : FOR ID ASSIGN expression RANGE expression instruction_list"""
+    """instruction_for : FOR ID ASSIGN expression RANGE expression instruction"""
 
 # def p_break(p):
 #     """break : BREAK"""
@@ -57,9 +57,10 @@ def p_instruction_for(p):
 # def p_continue(p):
 #     """continue : CONTINUE"""
 
+
 def p_instruction_if(p):  # !!!!
-    """ instruction_if : IF "(" expression ")" instruction_list
-                       | IF "(" expression ")" instruction_list ELSE instruction_list"""
+    """ instruction_if : IF "(" expression ")" instruction
+                       | IF "(" expression ")" instruction ELSE instruction"""
 
 
 def p_instruction_print(p):
@@ -107,11 +108,8 @@ def p_expression_create_matrix(p):
     """expression : create_matrix "(" expression ")" """
 
 
-
 def p_expression_minus(p):  #!!!!!
     """expression : SUB expression"""
-
-
 
 
 def p_expression_literal(p):

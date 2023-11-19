@@ -6,5 +6,6 @@ D2 -= A.-B' ; # substract element-wise A with transpose of B
 D3 *= A.*B' ; # multiply element-wise A with transpose of B
 D4 /= A./B' ; # divide element-wise A with transpose of B
 empty = ""
-number = 12435.4312 + 12423.45
+number = -12435.4312 - 12423.45
+num = -5
 print("PRINT")
