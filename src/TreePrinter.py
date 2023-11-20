@@ -1,5 +1,6 @@
 from __future__ import print_function
 import src.AST as AST
+import graphviz
 
 
 def addToClass(cls):
@@ -54,7 +55,7 @@ def printTree(self, indent=0):
 def printTree(self, indent=0):
     self.print_tab(indent)
     print("FOR")
-    self.begin.printTree(indent+ 1)
+    self.begin.printTree(indent + 1)
     self.end.printTree(indent + 1)
     self.body.printTree(indent + 1)
 

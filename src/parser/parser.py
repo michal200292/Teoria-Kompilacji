@@ -4,7 +4,6 @@ import src.AST as AST
 
 tokens = scanner.tokens
 precedence = (
-    ('nonassoc', 'IFX'),
     ('nonassoc', 'ELSE'),
     ('right', 'MULASSIGN', 'DIVASSIGN', 'SUBASSIGN', 'ADDASSIGN'),
     ('nonassoc', '<', '>', 'GEQ', 'LEQ', 'EQ', 'NEQ'),
@@ -12,7 +11,6 @@ precedence = (
     ('left', 'DOTADD', 'DOTSUB'),
     ('left', '*', '/'),
     ('left', 'DOTMUL', 'DOTDIV'),
-    ('right', 'UMINUS'),
     ('left', "'"),
 )
 
@@ -75,7 +73,7 @@ def p_instruction_print(p):
 
 def p_printables(p):
     """ printables : expr
-                | printables ',' expr"""
+                  | printables ',' expr"""
     p[0] = [p[1]] if len(p) == 2 else p[1] + [p[3]]
 
 
@@ -132,7 +130,7 @@ def p_expr_literal(p):
 
 
 def p_expr_minus(p):
-    """expr : "-" expr %prec UMINUS"""
+    """expr : "-" expr"""
     p[0] = AST.Uminus(p[2])
 
 
@@ -178,7 +176,7 @@ def p_matrix_function(p):
 
 
 def p_instruction_if(p):
-    """ instruction_if : IF '(' expr ')' instruction %prec IFX
+    """ instruction_if : IF '(' expr ')' instruction
                     | IF '(' expr ')' instruction ELSE instruction"""
     p[0] = AST.IfCondition(p[3], p[5], p[7] if len(p) > 7 else None)
 
