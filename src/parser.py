@@ -23,7 +23,7 @@ def p_error(p):
         print("Unexpected end of input")
 
 
-def p_program_instructions(p):  #!#!#!#! moze na @odwrut
+def p_program_instructions(p):  # !#!#!#! moze na @odwrut
     """program : instruction program
                | instruction"""
 
@@ -43,12 +43,13 @@ def p_braces(p):
     """instruction : "{" program "}" """
 
 
-
 def p_instruction_while(p):
     """ instruction_while : WHILE "(" expression ")" instruction"""
 
+
 def p_instruction_for(p):
     """instruction_for : FOR ID ASSIGN expression RANGE expression instruction"""
+
 
 # def p_break(p):
 #     """break : BREAK"""
@@ -66,16 +67,15 @@ def p_instruction_if(p):  # !!!!
 def p_instruction_print(p):
     """ instruction_print : PRINT printables"""
 
+
 def p_printables(p):
     """ printables : printable
                    | printable "," printables"""
 
-def p_printable(p):
-    """ printable : expression
-                  | str"""
 
-def p_str(p):
-    """str : STRING"""
+def p_printable(p):
+    """ printable : expression"""
+
 
 def p_instruction_return(p):
     """ instruction_return : RETURN
@@ -108,7 +108,7 @@ def p_expression_create_matrix(p):
     """expression : create_matrix "(" expression ")" """
 
 
-def p_expression_minus(p):  #!!!!!
+def p_expression_minus(p):  # !!!!!
     """expression : SUB expression"""
 
 
@@ -123,6 +123,10 @@ def p_expression_intnum(p):
 
 def p_expression_floatnum(p):
     """expression : FLOATNUM"""
+
+
+def p_expression_string(p):
+    """expression : STRING"""
 
 
 def p_binary_expression(p):
@@ -142,6 +146,7 @@ def p_binary_expression(p):
             | expression GREATEREQUAL expression
             """
 
+
 def p_matrix(p):
     """ matrix : "[" vectors "]" """
 
@@ -156,8 +161,7 @@ def p_matrix_element(p):
     """ matrix_element : ID "[" INTNUM "," INTNUM "]" """
 
 
-
-def p_vectors(p):  #!!!
+def p_vectors(p):  # !!!
     """vectors : vector "," vectors
                | vector """
 
@@ -170,7 +174,6 @@ def p_vector_element(p):
     """ vector_element : ID "[" expression "]" """
 
 
-
 def p_variables(p):
     """variables : expression "," variables
                  | expression """
@@ -180,8 +183,6 @@ def p_variables(p):
 #     """variable : INTNUM
 #                 | FLOATNUM
 #                 | assignable """
-
-
 
 
 # def p_identifier(p):
@@ -236,7 +237,6 @@ def p_variables(p):
 #                   | identifier"""
 
 
-
 # def p_program(p):
 #     """program : instructions_opt"""
 #
@@ -259,6 +259,5 @@ def p_variables(p):
 
 # to finish the grammar
 # ....
-
 
 parser = yacc.yacc()
