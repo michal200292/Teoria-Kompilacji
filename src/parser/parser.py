@@ -1,5 +1,6 @@
 from src import scanner
 import ply.yacc as yacc
+# from src import AST
 
 tokens = scanner.tokens
 
@@ -23,7 +24,11 @@ def p_error(p):
         print("Unexpected end of input")
 
 
-def p_program_instructions(p):  # !#!#!#! moze na @odwrut
+# def p_start(p):
+#     """start : program"""
+
+
+def p_program_instructions(p):
     """program : instruction program
                | instruction"""
 
@@ -38,7 +43,6 @@ def p_instruction(p):
                         | BREAK ";"
                         | CONTINUE ";" """
 
-
 def p_braces(p):
     """instruction : "{" program "}" """
 
@@ -49,14 +53,6 @@ def p_instruction_while(p):
 
 def p_instruction_for(p):
     """instruction_for : FOR ID ASSIGN expression RANGE expression instruction"""
-
-
-# def p_break(p):
-#     """break : BREAK"""
-#
-#
-# def p_continue(p):
-#     """continue : CONTINUE"""
 
 
 def p_instruction_if(p):  # !!!!
