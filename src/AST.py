@@ -1,92 +1,41 @@
 class Node(object):
-
-    def print_node(self, indent):
+    def print_tab(self, indent):
         print("|   " * indent, end="")
 
 
-class Instruction(Node):
-    def __init__(self, instruction):
-        self.instruction = instruction
+class BinaryExpr(Node):
+    def __init__(self, left, op, right):
+        self.op = op
+        self.left = left
+        self.right = right
 
 
-class Printable(Node):
-
-    def __init__(self, expression):
-        self.expression = expression
-
-
-class Assignable(Node):
-
-    def __init__(self, value):
-        self.value = value
+class AssignOperation(Node):
+    def __init__(self, op, left, right):
+        self.op = op
+        self.left = left
+        self.right = right
 
 
-class String(Node):
-
-    def __init__(self, value):
-        self.value = value
-
-
-class WhileInstruction(Node):
-
-    def __init__(self, expression, instruction):
-        self.expression = expression
-        self.instruction = instruction
+class IfCondition(Node):
+    def __init__(self, cond, if_body, else_body=None):
+        self.cond = cond
+        self.if_body = if_body
+        self.else_body = else_body
 
 
-class ForInstruction(Node):
-
-    def __init__(self, variable, expression, instruction, exp_range):
-        self.variable = variable
-        self.expression = expression
-        self.instruction = instruction
-        self.exp_range = exp_range
+class While(Node):
+    def __init__(self, cond, body):
+        self.cond = cond
+        self.body = body
 
 
-class IfInstruction(Node):
-
-    def __init__(self, expression, instruction, else_instruction):
-        self.expression = expression
-        self.instruction = instruction
-        self.else_instruction = else_instruction
-
-
-class PrintInstruction(Node):
-
-    def __init__(self, printable):
-        self.printable = printable
-
-
-class ReturnInstruction(Node):
-
-    def __init__(self, expression):
-        self.expression = expression
-
-
-class AssignInstruction(Node):
-
-    def __init__(self, assignable, instruction, expression):
-        self.assignable = assignable
-        self.instruction = instruction
-        self.expression = expression
-
-
-class Transpose(Node):
-
-    def __init__(self, matrix):
-        self.matrix = matrix
-
-
-class CreateMatrix(Node):
-
-    def __init__(self, matrix_type, size):
-        self.matrix_type = matrix_type
-        self.size = size
-
-
-class Continue(Node):
-    def __init__(self):
-        pass
+class For(Node):
+    def __init__(self, var, begin, end, body):
+        self.var = var
+        self.begin = begin
+        self.end = end
+        self.body = body
 
 
 class Break(Node):
@@ -94,15 +43,61 @@ class Break(Node):
         pass
 
 
+class Continue(Node):
+    def __init__(self):
+        pass
+
+
 class Return(Node):
-    def __init__(self, value):
-        self.value = value
+    def __init__(self, expr=None):
+        self.expr = expr
+
+
+class Print(Node):
+    def __init__(self, exprs):
+        self.exprs = exprs
+
+
+class Transpose(Node):
+    def __init__(self, arg):
+        self.arg = arg
+
+
+class Uminus(Node):
+    def __init__(self, arg):
+        self.arg = arg
+
+
+class Function(Node):
+    def __init__(self, function, argument):
+        self.function = function
+        self.arg = argument
+
+
+class Matrix(Node):
+    def __init__(self, matrix):
+        self.matrix = matrix
 
 
 class ID(Node):
+    def __init__(self, id):
+        self.id = id
 
-    def __init__(self, value):
-        self.value = value
+
+class Assignable(Node):
+    def __init__(self, id, index=None):
+        self.id = id
+        self.index = index
+
+
+class String(Node):
+    def __init__(self, string):
+        self.string = string
+
+
+class Instructions(Node):
+    def __init__(self, instructions):
+        self.instructions = instructions
 
 
 class IntNum(Node):
@@ -110,28 +105,22 @@ class IntNum(Node):
         self.value = value
 
 
-class FloatNum(Node):
-
+class Float(Node):
     def __init__(self, value):
         self.value = value
 
 
-class Variable(Node):
-    def __init__(self, name):
-        self.name = name
+class Start(Node):
+    def __init__(self, instructions):
+        self.instructions = instructions
 
 
-class BinExpr(Node):
-    def __init__(self, op, left, right):
-        self.op = op
-        self.left = left
-        self.right = right
+class Printable(Node):
+    def __init__(self, printables):
+        self.printables = printables
 
-
-# ...
-# fill out missing classes
-# ...
 
 class Error(Node):
     def __init__(self):
         pass
+

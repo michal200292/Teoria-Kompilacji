@@ -63,3 +63,6 @@ for i = 1:N+2 {
   N = 100;
   M = 200;
 }
+
+tak = "String test";
+tak2 = "String test2"; print("Hello World");

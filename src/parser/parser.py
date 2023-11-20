@@ -1,19 +1,19 @@
 from src import scanner
 import ply.yacc as yacc
-# from src import AST
+import src.AST as AST
 
 tokens = scanner.tokens
-
 precedence = (
-    ('nonassoc', 'IF'),
+    ('nonassoc', 'IFX'),
     ('nonassoc', 'ELSE'),
-    # ('right', 'MULASSIGN', 'DIVASSIGN', 'SUBASSIGN', 'ADDASSIGN'),
-    ('nonassoc', 'LESSTHAN', 'GREATERTHAN', 'GREATEREQUAL', 'LESSEQUAL', 'EQUAL', 'NOTEQUAL'),
-    ('left', 'ADD', 'SUB'),
+    ('right', 'MULASSIGN', 'DIVASSIGN', 'SUBASSIGN', 'ADDASSIGN'),
+    ('nonassoc', '<', '>', 'GEQ', 'LEQ', 'EQ', 'NEQ'),
+    ('left', '+', '-'),
     ('left', 'DOTADD', 'DOTSUB'),
-    ('left', 'MUL', 'DIV'),
+    ('left', '*', '/'),
     ('left', 'DOTMUL', 'DOTDIV'),
-    ('left', 'TRANSPOSE'),
+    ('right', 'UMINUS'),
+    ('left', "'"),
 )
 
 
@@ -24,155 +24,202 @@ def p_error(p):
         print("Unexpected end of input")
 
 
-# def p_start(p):
-#     """start : program"""
+def p_start(p):
+    """start : program"""
+    p[0] = AST.Instructions(p[1])
 
 
-def p_program_instructions(p):
-    """program : instruction program
-               | instruction"""
+def p_instructions(p):
+    """ program : instruction
+                    | program instruction"""
+    p[0] = p[1] + [p[2]] if len(p) == 3 else [p[1]]
+
+
+def p_break(p):
+    """break : BREAK"""
+    p[0] = AST.Break()
+
+
+def p_continue(p):
+    """continue : CONTINUE"""
+    p[0] = AST.Continue()
 
 
 def p_instruction(p):
-    """instruction : instruction_while
-                        | instruction_for
-                        | instruction_if
-                        | instruction_print ";"
-                        | instruction_return ";"
-                        | instruction_assign ";"
-                        | BREAK ";"
-                        | CONTINUE ";" """
-
-def p_braces(p):
-    """instruction : "{" program "}" """
+    """ instruction : instruction_if
+                | instruction_for
+                | instruction_while
+                | instruction_return ';'
+                | instruction_assign ';'
+                | instruction_print ';'
+                | break ';'
+                | continue ';' """
+    p[0] = p[1]
 
 
-def p_instruction_while(p):
-    """ instruction_while : WHILE "(" expression ")" instruction"""
-
-
-def p_instruction_for(p):
-    """instruction_for : FOR ID ASSIGN expression RANGE expression instruction"""
-
-
-def p_instruction_if(p):  # !!!!
-    """ instruction_if : IF "(" expression ")" instruction
-                       | IF "(" expression ")" instruction ELSE instruction"""
-
-
-def p_instruction_print(p):
-    """ instruction_print : PRINT printables"""
-
-
-def p_printables(p):
-    """ printables : printable
-                   | printable "," printables"""
-
-
-def p_printable(p):
-    """ printable : expression"""
+def p_scope(p):
+    """ instruction : '{' program '}' """
+    p[0] = AST.Instructions(p[2])
 
 
 def p_instruction_return(p):
     """ instruction_return : RETURN
-                           | RETURN expression"""
+                        | RETURN expr"""
+    p[0] = AST.Return() if len(p) == 1 else AST.Return(p[2])
+
+
+def p_instruction_print(p):
+    """ instruction_print : PRINT printables"""
+    p[0] = AST.Print(p[2])
+
+
+def p_printables(p):
+    """ printables : expr
+                | printables ',' expr"""
+    p[0] = [p[1]] if len(p) == 2 else p[1] + [p[3]]
 
 
 def p_instruction_assign(p):
-    """ instruction_assign : assignable ASSIGN expression
-                           | assignable ADDASSIGN expression
-                           | assignable SUBASSIGN expression
-                           | assignable MULASSIGN expression
-                           | assignable DIVASSIGN expression"""
+    """ instruction_assign : assignable '=' expr
+                        | assignable ADDASSIGN expr
+                        | assignable SUBASSIGN expr
+                        | assignable MULASSIGN expr
+                        | assignable DIVASSIGN expr"""
+    p[0] = AST.AssignOperation(p[2], p[1], p[3])
+
+
+def p_id(p):
+    """id : ID"""
+    p[0] = AST.ID(p[1])
 
 
 def p_assignable(p):
-    """ assignable : ID
-                   | matrix_element
-                   | vector_element"""
-
-
-def p_expression_trans(p):
-    """expression : expression TRANSPOSE"""
-
-
-def p_expression_nested(p):
-    """expression : "(" expression ")" """
-
-
-def p_expression_create_matrix(p):
-    """expression : create_matrix "(" expression ")" """
-
-
-def p_expression_minus(p):  # !!!!!
-    """expression : SUB expression"""
-
-
-def p_expression_literal(p):
-    """expression : assignable
-                  | matrix"""
-
-
-def p_expression_intnum(p):
-    """expression : INTNUM"""
-
-
-def p_expression_floatnum(p):
-    """expression : FLOATNUM"""
-
-
-def p_expression_string(p):
-    """expression : STRING"""
-
-
-def p_binary_expression(p):
-    """expression : expression ADD expression
-            | expression SUB expression
-            | expression MUL expression
-            | expression DIV expression
-            | expression DOTADD expression
-            | expression DOTSUB expression
-            | expression DOTMUL expression
-            | expression DOTDIV expression
-            | expression GREATERTHAN expression
-            | expression LESSTHAN expression
-            | expression EQUAL expression
-            | expression NOTEQUAL expression
-            | expression LESSEQUAL expression
-            | expression GREATEREQUAL expression
-            """
-
-
-def p_matrix(p):
-    """ matrix : "[" vectors "]" """
-
-
-def p_create_matrix(p):
-    """ create_matrix : ZEROS
-                      | ONES
-                      | EYE"""
+    """ assignable : id
+                    | matrix_element
+                    | vector_element"""
+    p[0] = AST.Assignable(p[1])
 
 
 def p_matrix_element(p):
-    """ matrix_element : ID "[" INTNUM "," INTNUM "]" """
-
-
-def p_vectors(p):  # !!!
-    """vectors : vector "," vectors
-               | vector """
-
-
-def p_vector(p):
-    """vector : "[" variables "]" """
+    """ matrix_element : id "[" INTNUM "," INTNUM "]" """
+    p[0] = AST.Assignable(p[1], (p[3], p[5]))
 
 
 def p_vector_element(p):
-    """ vector_element : ID "[" expression "]" """
+    """ vector_element : id "[" INTNUM "]" """
+    p[0] = AST.Assignable(p[1], p[3])
+
+
+def p_expr(p):
+    """expr : expr '\\''"""
+    p[0] = AST.Transpose(p[1])
+
+
+def p_expr_nested(p):
+    """expr : '(' expr ')'"""
+    p[0] = p[2]
+
+
+def p_expr_matrix_fun(p):
+    """expr : matrix_function '(' expr ')'"""
+    p[0] = AST.Function(p[1], p[3])
+
+
+def p_expr_literal(p):
+    """expr : assignable
+            | matrix"""
+    p[0] = p[1]
+
+
+def p_expr_minus(p):
+    """expr : "-" expr %prec UMINUS"""
+    p[0] = AST.Uminus(p[2])
+
+
+def p_expr_int(p):
+    """expr : INTNUM"""
+    p[0] = AST.IntNum(p[1])
+
+
+def p_expr_string(p):
+    """expr : STRING"""
+    p[0] = AST.String(p[1])
+
+
+def p_expr_float(p):
+    """expr : FLOAT"""
+    p[0] = AST.Float(p[1])
+
+
+def p_binary_expression(p):
+    """expr : expr '+' expr
+            | expr '-' expr
+            | expr '*' expr
+            | expr '/' expr
+            | expr DOTADD expr
+            | expr DOTSUB expr
+            | expr DOTMUL expr
+            | expr DOTDIV expr
+            | expr '>' expr
+            | expr '<' expr
+            | expr EQ expr
+            | expr NEQ expr
+            | expr LEQ expr
+            | expr GEQ expr
+    """
+    p[0] = AST.BinaryExpr(p[1], p[2], p[3])
+
+
+def p_matrix_function(p):
+    """ matrix_function : ZEROS
+                        | ONES
+                        | EYE"""
+    p[0] = p[1]
+
+
+def p_instruction_if(p):
+    """ instruction_if : IF '(' expr ')' instruction %prec IFX
+                    | IF '(' expr ')' instruction ELSE instruction"""
+    p[0] = AST.IfCondition(p[3], p[5], p[7] if len(p) > 7 else None)
+
+
+def p_instruction_for(p):
+    """ instruction_for : FOR id '=' expr ':' expr instruction"""
+    p[0] = AST.For(p[2], p[4], p[6], p[7])
+
+
+def p_instruction_while(p):
+    """ instruction_while : WHILE '(' expr ')' instruction"""
+    p[0] = AST.While(p[3], p[5])
+
+
+def p_matrix(p):
+    """ matrix : '[' vectors ']'"""
+    p[0] = AST.Matrix(p[2])
+
+
+def p_vectors(p):
+    """vectors : vectors ',' vector
+               | vector """
+    p[0] = p[1] + [p[3]] if len(p) > 3 else [p[1]]
+
+
+def p_vector(p):
+    """vector : '[' variables ']' """
+    p[0] = p[2]
 
 
 def p_variables(p):
-    """variables : expression "," variables
-                 | expression """
+    """variables : variables ',' variable
+                 | variable """
+    p[0] = p[1] + [p[3]] if len(p) > 3 else [p[1]]
+
+
+def p_variable(p):
+    """variable : INTNUM
+                | FLOAT
+                | assignable """
+    p[0] = p[1]
 
 
 parser = yacc.yacc()

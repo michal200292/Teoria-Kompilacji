@@ -1,19 +1,9 @@
 import ply.lex as lex
 
-tokens = ('ID', 'INTNUM', 'FLOATNUM', 'STRING',
-          'ADD', 'SUB', 'MUL', 'DIV',
-          'DOTADD', 'DOTSUB', 'DOTMUL', 'DOTDIV',
-          'ASSIGN', 'ADDASSIGN', 'SUBASSIGN', 'MULASSIGN', 'DIVASSIGN',
-          'LESSTHAN', 'GREATERTHAN', 'LESSEQUAL', 'GREATEREQUAL',
-          'NOTEQUAL', 'EQUAL', 'RANGE', 'TRANSPOSE', 'IF',
-          'ELSE', 'FOR', 'WHILE', 'BREAK', 'CONTINUE', 'RETURN',
-          'EYE', 'ZEROS', 'ONES', 'PRINT'
-          )
-
 reserved = {
     'if': 'IF',
-    'else': 'ELSE',
     'for': 'FOR',
+    'else': 'ELSE',
     'while': 'WHILE',
     'break': 'BREAK',
     'continue': 'CONTINUE',
@@ -21,58 +11,52 @@ reserved = {
     'eye': 'EYE',
     'zeros': 'ZEROS',
     'ones': 'ONES',
-    'print': 'PRINT'
+    'print': 'PRINT',
 }
 
-literals = ['(', ')', '[', ']', '{', '}', ',', ';']
+literals = "=+-*/()[]{}<>:,';"
+tokens = list(reserved.values()) + [
+    'DOTADD', 'DOTSUB', 'DOTMUL', 'DOTDIV',
+    'ADDASSIGN', 'SUBASSIGN', 'MULASSIGN', 'DIVASSIGN',
+    'LEQ', 'GEQ', 'EQ', 'NEQ',
+    'ID', 'INTNUM', 'FLOAT', 'STRING',
+]
+
+t_ignore = ' \t'
+t_ignore_COMMENT = r'\#.*'
 
 t_DOTADD = r'\.\+'
 t_DOTSUB = r'\.-'
 t_DOTMUL = r'\.\*'
 t_DOTDIV = r'\./'
-t_ASSIGN = r'='
 t_ADDASSIGN = r'\+='
 t_SUBASSIGN = r'-='
 t_MULASSIGN = r'\*='
 t_DIVASSIGN = r'/='
-t_LESSTHAN = r'<'
-t_GREATERTHAN = r'>'
-t_LESSEQUAL = r'<='
-t_GREATEREQUAL = r'>='
-t_NOTEQUAL = r'!='
-t_EQUAL = r'=='
-t_RANGE = r':'
-t_TRANSPOSE = r'\''
-t_ADD = r'\+'
-t_SUB = r'\-'
-t_MUL = r'\*'
-t_DIV = r'/'
-
-t_ignore = ' \t'
+t_LEQ = r'<='
+t_GEQ = r'>='
+t_EQ = r'=='
+t_NEQ = r'!='
 
 
 def t_ID(t):
-    r'[_a-zA-Z][_\w]*'
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value, 'ID')  # Check for reserved words
     return t
 
 
-def t_FLOATNUM(t):
-    # r'\d+\.\d*|\d*\.\d+'
-    r'(\d*\.\d+|\d+\.\d*)([eE]-?\d+)?|\d+([eE]-?\d+)'
-    t.value = float(t.value)
+def t_FLOAT(t):
+    r'(\d+\.\d*|\.\d+)([eE][-]?\d+)?|\d+([eE][-]?\d+)'
     return t
 
 
 def t_INTNUM(t):
     r'\d+'
-    t.value = int(t.value)
     return t
 
 
 def t_STRING(t):
     r'".*?"'
-    t.value = str(t.value)
     return t
 
 
@@ -81,13 +65,8 @@ def t_newline(t):
     t.lexer.lineno += len(t.value)
 
 
-def t_COMMENT(t):
-    r'\#.*'
-    pass
-
-
 def t_error(t):
-    print("line %d: illegal character '%s'" % (t.lineno, t.value[0]))
+    print("(%d): illegal character '%s'" % (t.lineno, t.value[0]))
     t.lexer.skip(1)
 
 
