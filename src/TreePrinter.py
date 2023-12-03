@@ -1,6 +1,6 @@
 from __future__ import print_function
 import src.AST as AST
-import graphviz
+# import graphviz
 
 
 def addToClass(cls):
