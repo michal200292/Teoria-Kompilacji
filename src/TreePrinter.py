@@ -28,7 +28,7 @@ def printTree(self, indent=0):
     self.print_tab(indent)
     print(self.op)
     self.left.printTree(indent + 1)
-    self.right.printTree(indent + 1)
+    self.expression.printTree(indent + 1)
 
 
 @addToClass(AST.IfCondition)
@@ -118,7 +118,7 @@ def printTree(self, indent=0):
 def printTree(self, indent=0):
     self.print_tab(indent)
     print("-")
-    self.arg.printTree(indent + 1)
+    self.expression.printTree(indent + 1)
 
 
 @addToClass(AST.ID)

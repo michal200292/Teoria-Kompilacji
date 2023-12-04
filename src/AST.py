@@ -11,10 +11,10 @@ class BinaryExpr(Node):
 
 
 class AssignOperation(Node):
-    def __init__(self, op, left, right):
+    def __init__(self, op, left, expression):
         self.op = op
         self.left = left
-        self.right = right
+        self.expression = expression
 
 
 class IfCondition(Node):
@@ -64,8 +64,8 @@ class Transpose(Node):
 
 
 class Uminus(Node):
-    def __init__(self, arg):
-        self.arg = arg
+    def __init__(self, expression):
+        self.expression = expression
 
 
 class Function(Node):
