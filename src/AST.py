@@ -44,8 +44,8 @@ class Break(Node):
 
 
 class Continue(Node):
-    def __init__(self):
-        pass
+    def __init__(self, line):
+        self.line = line
 
 
 class Return(Node):
