@@ -40,7 +40,7 @@ def p_break(p):
 
 def p_continue(p):
     """continue : CONTINUE"""
-    p[0] = AST.Continue()
+    p[0] = AST.Continue(p.lineno(1))
 
 
 def p_instruction(p):
