@@ -120,10 +120,28 @@ def p_expr_nested(p):
     p[0] = p[2]
 
 
-def p_expr_matrix_fun(p):
-    """expr : matrix_function '(' expr ')'"""
-    print(p.lineno(1))
+def p_expr_matrix_function(p):
+    """expr : EYE '(' INTNUM ')'
+            | ONES '(' INTNUM ')'
+            | ZEROS '(' INTNUM ')' """
     p[0] = AST.MatrixFunction(p[1], p[3], p.lineno(1))
+
+
+# def p_matrix_function(p):
+#     """matrix_function : EYE '(' INT ')'
+#                        | ONES '(' INT ')'
+#                        | ZEROS '(' INT ')' """
+#     print(p.lineno(1))
+
+
+# def p_expr_matrix_fun(p):
+#     """expr : matrix_function '(' expr ')'"""
+#     print(p.lineno(1))
+#     p[0] = AST.MatrixFunction(p[1], p[3], p.lineno(1))
+
+def p_expr_int(p):
+    """expr : INTNUM"""
+    p[0] = AST.IntNum(p[1])
 
 
 def p_expr_literal(p):
@@ -135,11 +153,6 @@ def p_expr_literal(p):
 def p_expr_minus(p):
     """expr : "-" expr"""
     p[0] = AST.Uminus(p[2])
-
-
-def p_expr_int(p):
-    """expr : INTNUM"""
-    p[0] = AST.IntNum(p[1])
 
 
 def p_expr_string(p):
@@ -171,11 +184,13 @@ def p_binary_expression(p):
     p[0] = AST.BinaryExpr(p[1], p[2], p[3], p.lineno(2))
 
 
-def p_matrix_function(p):
-    """ matrix_function : ZEROS
-                        | ONES
-                        | EYE"""
-    p[0] = p[1]
+# def p_matrix_function(p):
+#     """ matrix_function : ZEROS
+#                         | ONES
+#                         | EYE"""
+#     p[0] = p[1]
+
+
 
 
 def p_instruction_if(p):
