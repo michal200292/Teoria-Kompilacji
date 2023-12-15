@@ -274,7 +274,8 @@ class TypeChecker(NodeVisitor):
     def visit_Vector(self, node):
         self.visit(node.vector)
 
-        types = ["int" for vector_num in node.vector]
+        types = [self.visit(vector_num) for vector_num in node.vector]
+
         is_filled_with_int = \
             reduce(lambda acc, vect_elem_type:
                    vect_elem_type == "int" and acc,
@@ -296,6 +297,8 @@ class TypeChecker(NodeVisitor):
 
     @staticmethod
     def visit_str(node):
+        if node.isdigit():
+            return "int"
         return "string"
 
     def visit_Variable(self, node):
@@ -318,7 +321,7 @@ class TypeChecker(NodeVisitor):
 
     def visit_MatrixFunction(self, node):
         if isinstance(node.arg, int):
-            return VectorType([node.value, node.value], 'int', 2)
+            return VectorType([node.arg, node.arg], 'int', 2)
         else:
             self.errors.append((node.line, "Matrix function of invalid type"))
             return None
@@ -376,13 +379,12 @@ class TypeChecker(NodeVisitor):
 
     def visit_MatrixElement(self, node):
         x, y = node.index_x, node.index_y
-        if not (isinstance(x, int) and isinstance(y, int)):
+        if not ((isinstance(x, int) or x.isdigit()) and (isinstance(y, int) or y.isdigit())):
             self.errors.append((node.line, "Indecies must be an integer"))
             return None
 
-        variable_symbol = self.visit(node.id)
-        matrix_type = variable_symbol.type
-        if matrix_type is None or not isinstance(matrix_type, VectorType):
+        matrix_type = self.visit(node.id)
+        if matrix_type is None:
             self.errors.append((node.line, f"Matrix {node.id.id} has invalid type or is not initialized"))
             return None
 
@@ -391,7 +393,7 @@ class TypeChecker(NodeVisitor):
             return None
 
         max_x, max_y = matrix_type.size[0], matrix_type.size[1]
-        are_x_and_y_in_bounds = 0 <= x < max_x and 0 <= y < max_y
+        are_x_and_y_in_bounds = 0 <= int(x) < max_x and 0 <= int(y) < max_y
         if not are_x_and_y_in_bounds:
             self.errors.append((node.line, "Index not in range"))
             return None

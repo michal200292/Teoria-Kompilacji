@@ -96,7 +96,6 @@ def p_assignable(p):
     """ assignable : id
                     | matrix_element
                     | vector_element"""
-    # print("p_assignable:", p[1])
     p[0] = AST.Assignable(p[1])
 
 
@@ -124,20 +123,8 @@ def p_expr_matrix_function(p):
     """expr : EYE '(' INTNUM ')'
             | ONES '(' INTNUM ')'
             | ZEROS '(' INTNUM ')' """
-    p[0] = AST.MatrixFunction(p[1], p[3], p.lineno(1))
+    p[0] = AST.MatrixFunction(p[1], int(p[3]), p.lineno(1))
 
-
-# def p_matrix_function(p):
-#     """matrix_function : EYE '(' INT ')'
-#                        | ONES '(' INT ')'
-#                        | ZEROS '(' INT ')' """
-#     print(p.lineno(1))
-
-
-# def p_expr_matrix_fun(p):
-#     """expr : matrix_function '(' expr ')'"""
-#     print(p.lineno(1))
-#     p[0] = AST.MatrixFunction(p[1], p[3], p.lineno(1))
 
 def p_expr_int(p):
     """expr : INTNUM"""
