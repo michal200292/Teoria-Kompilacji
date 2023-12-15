@@ -35,7 +35,7 @@ def p_instructions(p):
 
 def p_break(p):
     """break : BREAK"""
-    p[0] = AST.Break()
+    p[0] = AST.Break(p.lineno(1))
 
 
 def p_continue(p):
@@ -83,6 +83,7 @@ def p_instruction_assign(p):
                         | assignable SUBASSIGN expr
                         | assignable MULASSIGN expr
                         | assignable DIVASSIGN expr"""
+    # print("p_instruction_assign ", p[1])
     p[0] = AST.AssignOperation(p[2], p[1], p[3])
 
 
@@ -95,17 +96,18 @@ def p_assignable(p):
     """ assignable : id
                     | matrix_element
                     | vector_element"""
+    # print("p_assignable:", p[1])
     p[0] = AST.Assignable(p[1])
 
 
 def p_matrix_element(p):
     """ matrix_element : id "[" INTNUM "," INTNUM "]" """
-    p[0] = AST.Assignable(p[1], (p[3], p[5]))
+    p[0] = AST.MatrixElement(p[1], p[3], p[5], p.lineno(2))
 
 
 def p_vector_element(p):
     """ vector_element : id "[" INTNUM "]" """
-    p[0] = AST.Assignable(p[1], p[3])
+    p[0] = AST.VectorElement(p[1], p[3], p.lineno(1))
 
 
 def p_expr(p):
@@ -165,7 +167,7 @@ def p_binary_expression(p):
             | expr LEQ expr
             | expr GEQ expr
     """
-    p[0] = AST.BinaryExpr(p[1], p[2], p[3])
+    p[0] = AST.BinaryExpr(p[1], p[2], p[3], p.lineno(2))
 
 
 def p_matrix_function(p):
@@ -193,13 +195,16 @@ def p_instruction_while(p):
 
 def p_matrix(p):
     """ matrix : '[' vectors ']'"""
-    p[0] = AST.Matrix(p[2])
+    p[0] = p[2]
 
 
 def p_vectors(p):
     """vectors : vectors ',' vector
                | vector """
-    p[0] = p[1] + [p[3]] if len(p) > 3 else [p[1]]
+    if len(p) == 4:
+        p[0] = AST.Matrix(p[3], p.lineno(2), p[1])
+    if len(p) == 2:
+        p[0] = AST.Matrix(p[1], p.lineno(1))
 
 
 def p_vector(p):
@@ -210,7 +215,10 @@ def p_vector(p):
 def p_variables(p):
     """variables : variables ',' variable
                  | variable """
-    p[0] = p[1] + [p[3]] if len(p) > 3 else [p[1]]
+    if len(p) == 4:
+        p[0] = AST.Vector(p[3], p.lineno(1), p[1])
+    if len(p) == 2:
+        p[0] = AST.Vector(p[1], p.lineno(1))
 
 
 def p_variable(p):

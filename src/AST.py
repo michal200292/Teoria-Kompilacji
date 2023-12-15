@@ -4,14 +4,16 @@ class Node(object):
 
 
 class BinaryExpr(Node):
-    def __init__(self, left, op, right):
+    def __init__(self, left, op, right, line):
         self.op = op
         self.left = left
         self.right = right
+        self.line = line
 
 
 class AssignOperation(Node):
     def __init__(self, op, left, expression):
+        # print("AST AssignOperation", left)
         self.op = op
         self.left = left
         self.expression = expression
@@ -39,8 +41,8 @@ class For(Node):
 
 
 class Break(Node):
-    def __init__(self):
-        pass
+    def __init__(self, line):
+        self.line = line
 
 
 class Continue(Node):
@@ -75,8 +77,35 @@ class Function(Node):
 
 
 class Matrix(Node):
-    def __init__(self, matrix):
-        self.matrix = matrix
+    def __init__(self, new_vector, line, matrix=None):
+        if matrix is not None:
+            self.matrix = matrix.matrix.copy()
+        else:
+            self.matrix = []
+        self.matrix.append(new_vector)
+        self.line = line
+
+
+class MatrixElement(Node):
+    def __init__(self, id, index_x, index_y, line):
+        self.id = id
+        self.index_x = index_x
+        self.index_y = index_y
+        self.line = line
+
+
+class Vector(Node):
+    def __init__(self, new_elem, line, vector=None):
+        self.vector = vector.vector.copy() if vector else []
+        self.vector.append(new_elem)
+        self.line = line
+
+
+class VectorElement(Node):
+    def __init__(self, id, index, line):
+        self.id = id
+        self.index = index
+        self.line = line
 
 
 class ID(Node):
@@ -123,4 +152,3 @@ class Printable(Node):
 class Error(Node):
     def __init__(self):
         pass
-

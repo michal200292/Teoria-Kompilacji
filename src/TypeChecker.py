@@ -12,7 +12,6 @@ ttype = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: None)))
 # ttype = defaultdict(lambda: defaultdict(lambda: defaultdict()))
 
 
-
 ttype['+']["int"]["int"] = "int"
 ttype['-']["int"]["int"] = "int"
 ttype['*']["int"]["int"] = "int"
@@ -97,11 +96,10 @@ ttype['-']['float'][None] = 'float'
 ttype['+']['string']['string'] = 'string'
 
 
-
 class NodeVisitor(object):
     def visit(self, node):
         method = 'visit_' + node.__class__.__name__
-        print(node, self.generic_visit)
+        # print(node, self.generic_visit)
         print(method)
 
         visitor = getattr(self, method, self.generic_visit)
@@ -120,6 +118,7 @@ class NodeVisitor(object):
                 elif isinstance(child, AST.Node):
                     self.visit(child)
 
+
 class TypeChecker(NodeVisitor):
     def init_visit(self):
         self.symbol_table = SymbolTable(None, 'main')
@@ -131,9 +130,10 @@ class TypeChecker(NodeVisitor):
             print(f'Line [{error[0]}]: {error[1]}')
 
     def visit_IntNum(self, node):
-        value = node.value
-        return "int" if isinstance(value, int) else "float"
+        return "int"
 
+    def visit_Float(self, node):
+        return "float"
 
     def visit_Instructions(self, node):
         self.init_visit()
@@ -141,12 +141,17 @@ class TypeChecker(NodeVisitor):
             self.visit(instruction)
         self.print_errors()
 
-    def visit_BinExpr(self, node):
+    def visit_BinaryExpr(self, node):
         type_left = self.visit(node.left)
         type_right = self.visit(node.right)
-        op = node.bin_op
+        op = node.op
 
         type = ttype[op][str(type_left)][str(type_right)]
+        # print("node.left:", node.left)
+        # print("I", str(type_left))
+        # print("II", op)
+        # print("III", str(type_right))
+        # print("IV", type)
         if type is not None:
             if type == 'vector':
                 if isinstance(type_left, VectorType) and isinstance(type_right, VectorType):
@@ -174,8 +179,9 @@ class TypeChecker(NodeVisitor):
         type_expr = self.visit(node.expression)
         op = node.op
         if op == '=':
-            self.symbol_table.put(node.left.id, type_expr)
-
+            # print("visit_AssignOperation, type_expr:", type_expr)
+            # print(node.left.id.id)  # z .id mamy address assignable
+            self.symbol_table.put(node.left.id.id, type_expr)
         else:
             type_var = self.visit(node.variable)
             result_type = ttype[op][str(type_var)][str(type_expr)]
@@ -235,10 +241,11 @@ class TypeChecker(NodeVisitor):
         return self.visit(node.expr)
 
     def visit_Print(self, node):
-        self.visit(node.print_vars)
+        self.visit(node.exprs)
 
     def visit_Matrix(self, node):
         vectors = [self.visit(vector) for vector in node.matrix]
+        print(vectors)
 
         vector_lengths = [len(vector.vector) for vector in node.matrix]
         are_vector_lengths_the_same = len(set(vector_lengths)) == 1
@@ -268,14 +275,15 @@ class TypeChecker(NodeVisitor):
         self.visit(node.vector)
 
         types = [self.visit(vector_num) for vector_num in node.vector]
+        print(node.vector)
         is_filled_with_int = \
             reduce(lambda acc, vect_elem_type:
                    vect_elem_type == "int" and acc,
                    [True] + types)
         is_filled_with_float = \
             reduce(lambda acc, vect_elem_type:
-                    vect_elem_type == "float" and acc,
-                    [True] + types)
+                   vect_elem_type == "float" and acc,
+                   [True] + types)
 
         if not is_filled_with_float and not is_filled_with_int:
             self.errors.append((node.line, "Vector must contain numerics"))
@@ -288,14 +296,14 @@ class TypeChecker(NodeVisitor):
         self.visit(node.vals)
 
     @staticmethod
-    def visit_String(node):
+    def visit_str(node):
         return "string"
 
     def visit_Variable(self, node):
         return self.visit(node.name)
 
-    # def visit_Assignable(self, node):
-    #     return self.visit(node.name)
+    def visit_Assignable(self, node):
+        return self.visit(node.id)
 
     def visit_Range(self, node):
         type_start = self.visit(node.start)
@@ -339,6 +347,9 @@ class TypeChecker(NodeVisitor):
         return type
 
     def visit_ID(self, node):
+        # print("in visit_ID")
+        # print(node)
+        # print(node.id)
         return self.symbol_table.get(node.id)
 
     def visit_VectorElement(self, node):
