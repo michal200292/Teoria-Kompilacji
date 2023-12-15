@@ -122,7 +122,8 @@ def p_expr_nested(p):
 
 def p_expr_matrix_fun(p):
     """expr : matrix_function '(' expr ')'"""
-    p[0] = AST.Function(p[1], p[3])
+    print(p.lineno(1))
+    p[0] = AST.MatrixFunction(p[1], p[3], p.lineno(1))
 
 
 def p_expr_literal(p):

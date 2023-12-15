@@ -95,7 +95,7 @@ def printTree(self, indent=0):
     self.arg.printTree(indent + 1)
 
 
-@addToClass(AST.Function)
+@addToClass(AST.MatrixFunction)
 def printTree(self, indent=0):
     self.print_tab(indent)
     print(self.function)

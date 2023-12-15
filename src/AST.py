@@ -70,10 +70,11 @@ class Uminus(Node):
         self.expression = expression
 
 
-class Function(Node):
-    def __init__(self, function, argument):
+class MatrixFunction(Node):
+    def __init__(self, function, argument, line):
         self.function = function
         self.arg = argument
+        self.line = line
 
 
 class Matrix(Node):

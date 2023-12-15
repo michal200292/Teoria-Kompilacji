@@ -317,7 +317,7 @@ class TypeChecker(NodeVisitor):
         return type_start
 
     def visit_MatrixFunction(self, node):
-        if isinstance(node.value, int):
+        if isinstance(node.arg, int):
             return VectorType([node.value, node.value], 'int', 2)
         else:
             self.errors.append((node.line, "Matrix function of invalid type"))
