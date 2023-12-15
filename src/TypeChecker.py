@@ -100,7 +100,7 @@ class NodeVisitor(object):
     def visit(self, node):
         method = 'visit_' + node.__class__.__name__
         # print(node, self.generic_visit)
-        print(method)
+        # print(method)
 
         visitor = getattr(self, method, self.generic_visit)
         return visitor(node)
@@ -245,7 +245,7 @@ class TypeChecker(NodeVisitor):
 
     def visit_Matrix(self, node):
         vectors = [self.visit(vector) for vector in node.matrix]
-        print(vectors)
+        # print(vectors)
 
         vector_lengths = [len(vector.vector) for vector in node.matrix]
         are_vector_lengths_the_same = len(set(vector_lengths)) == 1
@@ -274,8 +274,7 @@ class TypeChecker(NodeVisitor):
     def visit_Vector(self, node):
         self.visit(node.vector)
 
-        types = [self.visit(vector_num) for vector_num in node.vector]
-        print(node.vector)
+        types = ["int" for vector_num in node.vector]
         is_filled_with_int = \
             reduce(lambda acc, vect_elem_type:
                    vect_elem_type == "int" and acc,
